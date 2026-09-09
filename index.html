@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lead intake that hits your CRM in under 2 minutes — fixed-price automation</title>
+<meta name="description" content="One webhook for every lead source → validated, deduped, scored and routed to your CRM with Slack alerts. Fixed-price builds, test-data demo, bounded guarantee.">
+<style>
+:root{color-scheme:light dark}body{font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;max-width:44rem;margin:0 auto;padding:1.5rem;line-height:1.6}
+header{border-bottom:1px solid #8884;padding-bottom:1rem}h1{font-size:1.7rem;line-height:1.25}
+.card{border:1px solid #8886;border-radius:.6rem;padding:1rem;margin:1rem 0}
+.price{font-size:1.25rem;font-weight:700}code,pre{background:#8882;border-radius:.3rem}pre{padding:.75rem;overflow:auto;font-size:.8rem}
+label{display:block;margin:.5rem 0 .2rem}input,textarea,select{width:100%;padding:.5rem;font:inherit;border:1px solid #8888;border-radius:.4rem}
+button{padding:.6rem 1.2rem;font:inherit;font-weight:700;cursor:pointer;border-radius:.4rem;border:1px solid #888}
+#demoOut{white-space:pre-wrap;font-size:.85rem}footer{margin-top:2rem;font-size:.85rem;opacity:.8}
+.badge{display:inline-block;font-size:.75rem;border:1px solid #888;border-radius:1rem;padding:.1rem .6rem;margin-right:.4rem}
+</style>
+</head>
+<body>
+<header>
+<p><span class="badge">n8n</span><span class="badge">HubSpot / Pipedrive / GoHighLevel</span><span class="badge">Slack alerts</span></p>
+<h1>Every lead in your CRM in under 2 minutes — or you see exactly where it went.</h1>
+<p>One intake flow for web forms, lead ads, email and chat: validated, deduped by email, AI-scored (P1/P2/P3), routed to your CRM, hot leads pushed to Slack. Every run logged. Every failure alerts. Nothing sends to a lead without your approval.</p>
+</header>
+
+<section class="card" id="demo">
+<h2>Try the intake logic live (test data only)</h2>
+<p>Type a lead below. This runs the <em>same validation + dedupe + scoring rules</em> as the real flow, in your browser — nothing leaves this page, nothing is stored.</p>
+<label for="fName">First name</label>
+<input id="fName" value="Jane">
+<label for="fEmail">Work email</label>
+<input id="fEmail" value="jane.test@example.com">
+<label for="fMsg">Message</label>
+<textarea id="fMsg" rows="2">Need help with follow-up for 40 open-house leads a month</textarea>
+<p><button id="runDemo" type="button">Run test lead</button></p>
+<pre id="demoOut" aria-live="polite">Press “Run test lead”.</pre>
+</section>
+
+<section class="card">
+<h2>What a build contains (Done = checklist)</h2>
+<ul>
+<li>Lead → CRM record in <strong>&lt; 2 min</strong> median, source-tagged, owner-assigned</li>
+<li>Dedupe by email (search-before-create) — no duplicates, ever</li>
+<li>AI score + priority + human-approve draft reply (nothing auto-sends)</li>
+<li>Slack alert for P1 in &lt; 2 min; SLA escalation if no rep touch in 2 h</li>
+<li>Run log + error alerts; runbook + 20-min handover call</li>
+<li>Your accounts, your keys (least-privilege, revocable); no client data retained by us</li>
+</ul>
+</section>
+
+<section class="card">
+<h2>Fixed prices</h2>
+<p><span class="price">Automation audit — $750</span> (credited toward a build within 14 days)<br>
+Ranked map of your top 3–5 automations with hours/mo + dollar math. If the math doesn't clear 2× the build price in 90 days, I'll tell you not to build.</p>
+<p><span class="price">Essentials, one flow — $998</span> · 5-day delivery<br>
+e.g. web form / lead ad → CRM → Slack alert + log.</p>
+<p><span class="price">Standard intake + AI scoring — $2,400–$4,500</span> · 2–3 weeks<br>
+Multi-channel intake, validation/dedupe, CRM + deal, AI scoring, P1 alerts, SLA escalation, dashboard.</p>
+<p><span class="price">Care plan — $1,200/mo</span> · monitoring + error triage + 1 small build/mo, cancel anytime after 60 days.</p>
+<p><strong>Guarantee:</strong> if the signed Done = checklist fails at the handover demo, free fix in the 14/60-day window or a 50% refund. Scope is the Done = list — no surprises. Invoicing via PayPal after delivery milestones.</p>
+</section>
+
+<section class="card">
+<h2>Proof, not promises</h2>
+<ul>
+<li><a href="workflow.json">workflow.json</a> — the actual n8n flow this page mirrors (placeholders where your CRM/Slack keys go)</li>
+<li><a href="sample-run-log.json">sample-run-log.json</a> — what one test run records, including a rejected bad email</li>
+<li>Status: new service, currently accepting <strong>3 audit slots</strong>. No client list yet — that's why the demo, the workflow file, and the guarantee are public.</li>
+</ul>
+</section>
+
+<section class="card">
+<h2>Ask for an audit or a build</h2>
+<p>Fastest: <a id="issueLink" href="https://github.com/GhostCoder6969/lead-intake-automation-demo/issues/new?title=Audit%20request&body=My%20CRM%3A%0AMy%20lead%20sources%3A%0ALeads%20per%20month%3A%0A">open a GitHub issue</a> with your CRM, lead sources, and leads/month. I reply within one business day with either a fixed quote or an honest "don't build this". No cold DMs, no retainer required, no data retained.</p>
+</section>
+
+<footer>
+<p>Test-data demo. “jane.test@example.com” and all examples are fictitious. n8n/HubSpot/Pipedrive/GoHighLevel/Slack belong to their owners; no affiliation claimed.</p>
+</footer>
+
+<script>
+const seen = new Set(["ops@agency.io"]);
+function score(msg){
+  const m = (msg||"").toLowerCase();
+  let fit = 40;
+  if(/crm|hubspot|pipedrive|gohighlevel|follow-up|leads/.test(m)) fit += 30;
+  if(/\d+\s*(leads|companies|clients)/.test(m)) fit += 15;
+  if(/free|winner|crypto|seo\s+backlink/.test(m)) fit -= 50;
+  fit = Math.max(0, Math.min(100, fit));
+  return {fit, priority: fit >= 70 ? "P1" : fit >= 40 ? "P2" : "P3"};
+}
+document.getElementById("runDemo").addEventListener("click", () => {
+  const name = document.getElementById("fName").value.trim();
+  const email = document.getElementById("fEmail").value.trim().toLowerCase();
+  const msg = document.getElementById("fMsg").value.trim();
+  const out = [];
+  const emailOk = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email);
+  if(!emailOk){ out.push("HTTP 400 — rejected: invalid email format. Logged to #errors-test, nothing written to CRM."); }
+  else if(!msg){ out.push("HTTP 400 — rejected: message required. Logged to #errors-test."); }
+  else if(seen.has(email)){ out.push("DUPLICATE — " + email + " already in CRM (search-before-create hit). Existing record updated with new source tag; no duplicate created."); }
+  else {
+    const s = score(msg);
+    seen.add(email);
+    out.push("OK — webhook received at " + new Date().toISOString());
+    out.push("VALIDATE: email ok, fields normalized (lowercase/trim).");
+    out.push("DEDUPE: " + email + " not found → create contact + deal (source: web-form).");
+    out.push("AI SCORE: fit " + s.fit + "/100 → priority " + s.priority + ".");
+    out.push(s.priority === "P1" ? "ROUTE: Slack #leads-test alert + draft reply queued for HUMAN APPROVE (not sent)." : "ROUTE: queued for next rep review; SLA timer armed (2h).");
+    out.push("LOG: run row written (payload hash, CRM id, status). Done in < 2 min by design.");
+  }
+  document.getElementById("demoOut").textContent = out.join("\n");
+});
+</script>
+</body>
+</html>
